@@ -266,5 +266,7 @@ The system is **immediately runnable**, well-tested, and designed for easy exten
 
 ## 📚 Additional Documentation
 
+- **[API Documentation](docs/api.md)** - Comprehensive API reference with endpoints, schemas, and examples
+- **[Web Application Documentation](docs/webapp.md)** - Frontend architecture, components, and development guide
 - [PostgreSQL Migration Guide](docs/postgresql-migration.md) - Detailed migration documentation
-- [API Documentation](docs/spec.md) - API specifications and endpoints
+- [API Specifications](docs/spec.md) - Original API specifications
