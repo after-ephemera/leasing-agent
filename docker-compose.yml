@@ -1,0 +1,59 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: leasing-db
+    environment:
+      - POSTGRES_DB=leasing_assistant
+      - POSTGRES_USER=leasing_user
+      - POSTGRES_PASSWORD=leasing_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    image: leasing-assistant-api:dev
+    container_name: leasing-api
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - DATABASE_URL=postgresql://leasing_user:leasing_password@db:5432/leasing_assistant
+      # Provide your OpenAI key via env or .env file if needed
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    volumes:
+      - api_logs:/app/logs
+    ports:
+      - "3001:3001"
+    depends_on:
+      - db
+    command: npm run dev
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./web/leasing-chat
+      dockerfile: Dockerfile
+    image: leasing-assistant-web:dev
+    container_name: leasing-web
+    environment:
+      - VITE_API_URL=http://localhost:3001
+      - NODE_ENV=development
+      - PORT=5173
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+    command: npm run dev -- --host 0.0.0.0 --port 5173
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  api_logs:
+
+
